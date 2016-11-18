@@ -17,4 +17,6 @@ public interface IBleProcess {
     public byte getType();
 
     public int exec(BleInBuffer request, IBleProcessCallback callback);
+
+    public void clear();
 }

@@ -14,6 +14,7 @@ import com.tencent.tws.walletserviceproxy.service.IWalletServiceProxy;
 public class SnowBallChannel extends TsmChannel {
     private IWalletServiceProxy mWalletServiceProxy = null;
     private Context mContext = null;
+    private String mAid = null;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -28,6 +29,7 @@ public class SnowBallChannel extends TsmChannel {
 
     public SnowBallChannel(BleContext context) {
         mContext = context.getAndroidContext();
+        bindWalletService();
     }
 
     private void unbindWalletService() {
@@ -64,21 +66,19 @@ public class SnowBallChannel extends TsmChannel {
         if (mWalletServiceProxy == null) {
             return -1;
         }
+        if (instanceId.equalsIgnoreCase(mAid)) {
+            return 0;
+        }
         int[] resultCode = new int[1];
         try {
             mWalletServiceProxy.selectAid(instanceId, resultCode);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return resultCode[0];
-    }
-
-    @Override
-    public int open() {
-        if (mWalletServiceProxy == null) {
-            bindWalletService();
+        if (resultCode[0] == 0) {
+            mAid = instanceId;
         }
-        return 0;
+        return resultCode[0];
     }
 
     @Override

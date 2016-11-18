@@ -21,18 +21,27 @@ public class ApduProcess extends BleProcess {
     @Override
     public int exec(BleInBuffer request, IBleProcessCallback callback) {
         byte[] input = null;
-        int ret = mChannel.apduExtrange(input, mApduResult);
+        int ret = 0;
+        String instanceId = "";
+        if (mChannel.selectAID(instanceId) != 0) {
+            return -1;
+        }
         BleOutBuffer buffer = genRspBuffer();
-        if (ret == 0) {
+        if (mChannel.apduExtrange(input, mApduResult) == 0) {
             callback.onCallback(buffer);
         }
-        return 0;
+        return ret;
     }
 
     @Override
     protected BleOutBuffer genRspBuffer() {
-//        IccResp iccResp =
+        // IccResp iccResp =
         return null;
+    }
+
+    @Override
+    public void clear() {
+        mChannel.close();
     }
 
 }
