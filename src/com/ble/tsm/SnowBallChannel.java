@@ -8,10 +8,9 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.ble.BleContext;
 import com.tencent.tws.walletserviceproxy.service.IWalletServiceProxy;
 
-public class SnowBallChannel extends TsmChannel {
+public class SnowBallChannel implements ITsmChannel {
     private IWalletServiceProxy mWalletServiceProxy = null;
     private Context mContext = null;
     private String mAid = null;
@@ -27,8 +26,8 @@ public class SnowBallChannel extends TsmChannel {
         }
     };
 
-    public SnowBallChannel(BleContext context) {
-        mContext = context.getAndroidContext();
+    public SnowBallChannel(Context context) {
+        mContext = context;
         bindWalletService();
     }
 

@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import com.ble.BleContext;
 import com.ble.common.ErrCode;
-import com.ble.common.Utils;
+import com.ble.common.ThreadUtils;
 import com.ble.data.BleBufferReader;
 import com.ble.data.BleInBuffer;
 import com.ble.data.BleMetaData;
@@ -41,13 +41,14 @@ public class BleHandler implements IBleHandler {
 
             @Override
             public int onCallback(BleOutBuffer buffer) {
+                mReader.clearAll();
                 return sendResponse(buffer);
             }
         });
     }
 
     private int sendResponse(final BleOutBuffer outBuffer) {
-        Utils.getWorkerHandler().post(new Runnable() {
+        ThreadUtils.getWorkerHandler().post(new Runnable() {
 
             @Override
             public void run() {
@@ -73,7 +74,7 @@ public class BleHandler implements IBleHandler {
 
     @Override
     public int handle(final byte[] data) {
-        Utils.getWorkerHandler().post(new Runnable() {
+        ThreadUtils.getWorkerHandler().post(new Runnable() {
 
             @Override
             public void run() {

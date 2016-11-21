@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
-public class Utils {
+public class ThreadUtils {
 
     private static final HandlerThread mWorkerHandlerThread = new HandlerThread("BleWork");
 
@@ -20,7 +20,7 @@ public class Utils {
      */
     public static Looper getWorkerlooper() {
         if (mWorkerLooper == null) {
-            synchronized (Utils.class) {
+            synchronized (ThreadUtils.class) {
                 if (mWorkerLooper == null) {
                     mWorkerHandlerThread.start();
                     mWorkerLooper = mWorkerHandlerThread.getLooper();
@@ -37,7 +37,7 @@ public class Utils {
      */
     public static Handler getWorkerHandler() {
         if (mWorkerHandler == null) {
-            synchronized (Utils.class) {
+            synchronized (ThreadUtils.class) {
                 if (mWorkerHandler == null) {
                     mWorkerHandler = new Handler(getWorkerlooper());
                 }

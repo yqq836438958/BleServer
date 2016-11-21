@@ -31,6 +31,9 @@ public class BleBufferReader {
             BleInBuffer buffer = new BleInBuffer(data[4], data);
             mInBuffers.add(buffer);
             mBufferIndex++;
+            if (data[0] == (byte) 0x01) {
+                return ErrCode.ERR_HANDLE_OK;
+            }
             return ErrCode.ERR_HANDLE_WAIT;
         }
         BleInBuffer buffer = getCurIndexBuffer();
@@ -38,12 +41,10 @@ public class BleBufferReader {
             return ErrCode.ERR_EXCEPTION;
         }
         mSegmentIndex++;
+        buffer.put(data);
         if (data[0] == (byte) 0x01) {
             mSegmentIndex = -1;
             // 重置
-        }
-        if (buffer.put(data) != 0) {
-            mSegmentIndex = -1;
             return ErrCode.ERR_HANDLE_OK;
         }
         return ErrCode.ERR_HANDLE_WAIT;
@@ -54,5 +55,9 @@ public class BleBufferReader {
             return null;
         }
         return mInBuffers.get(mBufferIndex);
+    }
+
+    public void clearAll() {
+        mInBuffers.clear();
     }
 }

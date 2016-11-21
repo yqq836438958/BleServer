@@ -19,7 +19,7 @@ public class BleMetaData {
         if (header == null) {
             System.arraycopy(realData, 0, mData, 1, realData.length);
         } else {
-            System.arraycopy(header, 0, mData, 1, header.getHeaderLength());
+            System.arraycopy(header.getData(), 0, mData, 1, header.getHeaderLength());
             System.arraycopy(realData, 0, mData, header.getHeaderLength() + 1, realData.length);
         }
     }

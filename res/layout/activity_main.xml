@@ -21,5 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/tv_result"
         android:text="开启" />
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_result"
+        android:text="关闭" />
 
 </RelativeLayout>

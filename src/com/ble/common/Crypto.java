@@ -55,7 +55,10 @@ public class Crypto {
         }
     }
 
-    public static byte[] encrypt(byte[] text) {
-        return encrypt_3DES(getDefaultKey(), text, 0, text.length, null);
+    public static byte[] encrypt(byte[] text, int length) {
+        byte[] res = encrypt_3DES(getDefaultKey(), text, 0, text.length, null);
+        byte[] result = new byte[length];
+        System.arraycopy(res, res.length - length, result, 0, length);
+        return result;
     }
 }

@@ -29,7 +29,6 @@ public class BleServer implements IBleServer {
     public static final String TAG = "BleServer";
     private BluetoothManager mBtManager = null;
     private BluetoothAdapter mBtApdapter = null;
-    private static BleServer sInstance = null;
     private BluetoothGattServer mGattServer = null;
     private Context mContext = null;
     private BleContext mBleContext = null;
@@ -46,6 +45,7 @@ public class BleServer implements IBleServer {
     }
 
     private void initHandler() {
+        mBleContext = new BleContext(mContext);
         mHandler = new BleHandler(mBleContext, this);
     }
 
@@ -110,18 +110,8 @@ public class BleServer implements IBleServer {
         mGattServer = mBtManager.openGattServer(mContext, mBluetoothGattServerCallback);
     }
 
-    public void addService(String uuid_service, String uuid_charact) {
-        BluetoothGattService nameService = new BluetoothGattService(
-                UUID.fromString(uuid_service),
-                BluetoothGattService.SERVICE_TYPE_PRIMARY);
-
-        BluetoothGattCharacteristic nameCharacteristic = new BluetoothGattCharacteristic(
-                UUID.fromString(uuid_charact),
-                BluetoothGattCharacteristic.PROPERTY_READ
-                        | BluetoothGattCharacteristic.PROPERTY_WRITE,
-                BluetoothGattCharacteristic.PERMISSION_READ
-                        | BluetoothGattCharacteristic.PERMISSION_WRITE);
-        nameService.addCharacteristic(nameCharacteristic);
+    public void addService(BluetoothGattService nameService) {
+        String uuid_service = nameService.getUuid().toString();
         mGattServer.addService(nameService);
         mBleAdvertiser.startAdvertising(createAdvSettings(), createAdvData(uuid_service),
                 mAdvertiseCallback);

@@ -2,49 +2,46 @@
 package com.ble.data;
 
 public class BleHeader {
+    public static final int BLE_HEADER_LEN = 5;
     private byte[] mHeadData;
     private byte bMagicNumber = (byte) 0xBC;
     private byte bVer = (byte) 0x01;
-    private int bHeaderLength = 0;
+    private int bContentLength = 0;
     private int bCmdId;
     private boolean bEncFlag = false;
 
-    public BleHeader(int cmd) {
-        this(cmd, false);
-    }
-
-    public BleHeader(int cmd, int length, boolean encFlag) {
-        this(cmd, false);
-        bHeaderLength = length;
-    }
-
-    public BleHeader(int cmd, boolean encFlag) {
-        mHeadData = new byte[5];
+    public BleHeader(byte[] data, int cmd, boolean encFlag) {
+        mHeadData = new byte[BLE_HEADER_LEN];
         bCmdId = cmd;
         bEncFlag = encFlag;
-        genHeader();
-    }
 
-    private void genHeader() {
         mHeadData[0] = bMagicNumber;
         mHeadData[1] = bVer;
+        mHeadData[2] = (byte) data.length;
         mHeadData[3] = (byte) bCmdId;
         mHeadData[4] = bEncFlag ? (byte) 0x01 : (byte) 0x00;
-        if (bHeaderLength > 0) {
-            mHeadData[2] = (byte) bHeaderLength;
-        }
+        bContentLength = data.length;
     }
 
-    public void setContentLength(int length) {
-        bHeaderLength = length;
-        mHeadData[2] = (byte) length;
+    public BleHeader(byte[] inputdata) {
+        mHeadData = new byte[BLE_HEADER_LEN];
+        System.arraycopy(inputdata, 1, mHeadData, 0, mHeadData.length);
+        bMagicNumber = mHeadData[0];
+        bVer = mHeadData[1];
+        bContentLength = mHeadData[2];
+        bCmdId = mHeadData[3];
+        bEncFlag = (mHeadData[4] == (byte) 0x01);
     }
 
     public int getContentLength() {
-        return bHeaderLength;
+        return bContentLength;
     }
 
     public int getHeaderLength() {
         return mHeadData.length;
+    }
+
+    public byte[] getData() {
+        return mHeadData;
     }
 }

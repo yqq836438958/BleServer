@@ -7,10 +7,11 @@ public class BleInBuffer extends BleBuffer {
     private int mDataOffset = 0;
 
     public BleInBuffer(byte cmd, byte[] data) {
-        super(cmd, data);
+        super(cmd, data, true);
+        firstFill(data);
     }
 
-    public byte[] get() {
+    public byte[] getData() {
         return mTargetData;
     }
 
@@ -25,16 +26,16 @@ public class BleInBuffer extends BleBuffer {
         return 0;
     }
 
-    @Override
-    protected int onFillBuffer(byte[] data) {
+    private int firstFill(byte[] data) {
         mDataLength = mHeader.getContentLength();
         int headerLen = mHeader.getHeaderLength();
         mTargetData = new byte[mDataLength];
-        if (mDataLength < BLE_BUFFER_MAX_SIZE - 1 - headerLen) {
-            System.arraycopy(data, headerLen, mTargetData, 0, mDataLength);
+        if (mDataLength <= BLE_BUFFER_MAX_SIZE - 1 - headerLen) {
+            System.arraycopy(data, headerLen + 1, mTargetData, 0, mDataLength);
             mDataOffset += mDataLength;
         } else {
-            System.arraycopy(data, headerLen, mTargetData, 0, BLE_BUFFER_MAX_SIZE - 1 - headerLen);
+            System.arraycopy(data, headerLen + 1, mTargetData, 0,
+                    BLE_BUFFER_MAX_SIZE - 1 - headerLen);
             mDataOffset += BLE_BUFFER_MAX_SIZE - headerLen - 1;
         }
         return 0;

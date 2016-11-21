@@ -19,6 +19,9 @@ public abstract class BleProcess implements IBleProcess {
             case IBleProcess.AUTH:
                 process = new AuthProcess(context);
                 break;
+            case IBleProcess.ICC:
+                process = new ApduProcess(context);
+                break;
             default:
                 break;
         }

@@ -6,18 +6,18 @@ public abstract class BleBuffer {
     public static final int BLE_BUFFER_MAX_SIZE = 20;
     private byte mType = 0;
 
-    public BleBuffer(byte cmd, byte[] data) {
-        this(cmd, data, false);
+    public BleBuffer(byte cmd, byte[] data, boolean isInput) {
+        this(cmd, data, false, isInput);
     }
 
-    public BleBuffer(byte cmd, byte[] data, boolean encFlag) {
-        mHeader = new BleHeader(cmd, encFlag);
-        mHeader.setContentLength(data.length);
+    public BleBuffer(byte cmd, byte[] data, boolean encFlag, boolean isInput) {
+        if (isInput) {
+            mHeader = new BleHeader(data);
+        } else {
+            mHeader = new BleHeader(data, cmd, encFlag);
+        }
         mType = cmd;
-        onFillBuffer(data);
     }
-
-    protected abstract int onFillBuffer(byte[] data);
 
     public BleHeader getHeader() {
         return mHeader;
