@@ -4,61 +4,61 @@ package com.ble.common;
 import java.security.Key;
 
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Crypto {
     // List of used ciphers.
-    public static final String DES3_CBC_CIPHER = "DESede/CBC/NoPadding";
-    public static final String DES3_ECB_CIPHER = "DESede/ECB/NoPadding";
-    public static final String DES_CBC_CIPHER = "DES/CBC/NoPadding";
-    public static final String DES_ECB_CIPHER = "DES/ECB/NoPadding";
-    public static final String AES_CBC_CIPHER = "AES/CBC/NoPadding";
+    public static final String DES3_ECB_CIPHER = "DESede/ECB/PKCS7Padding";
     private static byte[] DEFAULT_KEY = new byte[] {
-            0x11, 0x22, 0x33, 0x55, 0x66
+            (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x55, (byte) 0x66, (byte) 0x88,
+            (byte) 0x12, (byte) 0x55, (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x55,
+            (byte) 0x66, (byte) 0x88,
+            (byte) 0x12, (byte) 0x55, (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x55,
+            (byte) 0x66, (byte) 0x88,
+            (byte) 0x12, (byte) 0x55,
     };
 
-    public static byte[] encrypt_3DES(Key key, byte[] text, int offset, int length, byte[] iv) {
-        if (length == -1) {
-            length = text.length - offset;
-        }
-
-        try {
-            Cipher cipher = Cipher.getInstance(DES3_CBC_CIPHER);
-            if (iv == null) {
-                cipher.init(Cipher.ENCRYPT_MODE, key);
-            } else {
-                cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
-            }
-            byte[] res = cipher.doFinal(text, offset, length);
-            // System.arraycopy(res, res.length - 8, result, 0, 8);
-            return res;
-        } catch (Exception e) {
-            throw new RuntimeException("MAC computation failed.", e);
-        }
+    public static byte[] encrypt(byte[] src) {
+        return encrypt(DEFAULT_KEY, src);
     }
 
-    public static Key getDefaultKey() {
-        return new SecretKeySpec(enlarge(DEFAULT_KEY, 24), "DESede");
-    }
-
-    private static byte[] enlarge(byte[] key, int length) {
-        if (length == 24) {
-            byte[] key24 = new byte[24];
-            System.arraycopy(key, 0, key24, 0, 16);
-            System.arraycopy(key, 0, key24, 16, 8);
-            return key24;
-        } else {
-            byte[] key8 = new byte[8];
-            System.arraycopy(key, 0, key8, 0, 8);
-            return key8;
+    // 加密字符串
+    public static byte[] encrypt(byte[] keybyte, byte[] src) {
+        try { // 生成密钥
+            SecretKey deskey = new SecretKeySpec(keybyte, DES3_ECB_CIPHER); // 加密
+            Cipher c1 = Cipher.getInstance(DES3_ECB_CIPHER);
+            c1.init(Cipher.ENCRYPT_MODE, deskey);
+            return c1.doFinal(src);
+        } catch (java.security.NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (javax.crypto.NoSuchPaddingException e2) {
+            e2.printStackTrace();
+        } catch (java.lang.Exception e3) {
+            e3.printStackTrace();
         }
+        return null;
     }
 
-    public static byte[] encrypt(byte[] text, int length) {
-        byte[] res = encrypt_3DES(getDefaultKey(), text, 0, text.length, null);
-        byte[] result = new byte[length];
-        System.arraycopy(res, res.length - length, result, 0, length);
-        return result;
+    public static byte[] decrypt(byte[] src) {
+        return decrypt(DEFAULT_KEY, src);
+    }
+
+    // 解密字符串
+    public static byte[] decrypt(byte[] keybyte, byte[] src) {
+        try { // 生成密钥
+            SecretKey deskey = new SecretKeySpec(keybyte, DES3_ECB_CIPHER); // 解密
+            Cipher c1 = Cipher.getInstance(DES3_ECB_CIPHER);
+            c1.init(Cipher.DECRYPT_MODE, deskey);
+            return c1.doFinal(src);
+        } catch (java.security.NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (javax.crypto.NoSuchPaddingException e2) {
+            e2.printStackTrace();
+        } catch (java.lang.Exception e3) {
+            e3.printStackTrace();
+        }
+        return null;
     }
 }

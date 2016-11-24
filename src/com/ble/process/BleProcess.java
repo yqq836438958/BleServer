@@ -2,7 +2,9 @@
 package com.ble.process;
 
 import com.ble.BleContext;
+import com.ble.data.BleInBuffer;
 import com.ble.data.BleOutBuffer;
+import com.ble.process.IBleProcess.IBleProcessCallback;
 
 public abstract class BleProcess implements IBleProcess {
     private byte mType = 0;
@@ -33,5 +35,25 @@ public abstract class BleProcess implements IBleProcess {
         return mType;
     }
 
-    protected abstract BleOutBuffer genRspBuffer();
+    @Override
+    public int exec(BleInBuffer request, IBleProcessCallback callback) {
+        boolean isRequestCrypt = request.isEncrypt();
+        int ret = onExec(request.getData());
+        postExecResult(ret, "", isRequestCrypt, callback);
+        return ret;
+    }
+
+    protected abstract int onExec(byte[] data);
+
+    protected abstract byte[] getResponse(int error, String msg);
+
+    private void postExecResult(int ret, String desc, Boolean isRequestCrypt,
+            IBleProcessCallback callback) {
+        if (callback == null) {
+            return;
+        }
+        byte[] result = getResponse(ret, desc);
+        callback.onCallback(new BleOutBuffer(mType, result, isRequestCrypt));
+    }
+
 }

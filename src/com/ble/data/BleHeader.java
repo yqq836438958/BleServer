@@ -17,7 +17,7 @@ public class BleHeader {
 
         mHeadData[0] = bMagicNumber;
         mHeadData[1] = bVer;
-        mHeadData[2] = (byte) data.length;
+        mHeadData[2] = (byte) (data.length + mHeadData.length);
         mHeadData[3] = (byte) bCmdId;
         mHeadData[4] = bEncFlag ? (byte) 0x01 : (byte) 0x00;
         bContentLength = data.length;
@@ -28,7 +28,7 @@ public class BleHeader {
         System.arraycopy(inputdata, 1, mHeadData, 0, mHeadData.length);
         bMagicNumber = mHeadData[0];
         bVer = mHeadData[1];
-        bContentLength = mHeadData[2];
+        bContentLength = mHeadData[2] - mHeadData.length;
         bCmdId = mHeadData[3];
         bEncFlag = (mHeadData[4] == (byte) 0x01);
     }
@@ -43,5 +43,15 @@ public class BleHeader {
 
     public byte[] getData() {
         return mHeadData;
+    }
+
+    public boolean isEncrypt() {
+        return bEncFlag;
+    }
+
+    public void updateContentLength(int length) {
+        int diff = length - bContentLength;
+        mHeadData[2] += diff;
+        bContentLength = length;
     }
 }

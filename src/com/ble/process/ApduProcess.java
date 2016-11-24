@@ -2,13 +2,12 @@
 package com.ble.process;
 
 import com.ble.BleContext;
-import com.ble.data.BleInBuffer;
-import com.ble.data.BleOutBuffer;
 import com.ble.tsm.ITsmChannel;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import BmacBp.BeijingCard.BaseResp;
+import BmacBp.BeijingCard.EmRetCode;
 import BmacBp.BeijingCard.IccReq;
 import BmacBp.BeijingCard.IccResp;
 
@@ -22,40 +21,40 @@ public class ApduProcess extends BleProcess {
     }
 
     @Override
-    public int exec(BleInBuffer request, IBleProcessCallback callback) {
+    protected int onExec(byte[] data) {
+        if (mContext.isUserAuthed()) {
+            return EmRetCode.ERC_needAuth_err_VALUE;
+        }
         IccReq req = null;
         try {
-            req = IccReq.parseFrom(request.getData());
+            req = IccReq.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
         if (req == null) {
-            return -1;
+            return EmRetCode.ERC_system_err_VALUE;
         }
         byte[] input = req.getData().toByteArray();
-        int ret = 0;
         String instanceId = "A000000151000000";
         if (mChannel.selectAID(instanceId) != 0) {
-            return -1;
+            return EmRetCode.ERC_system_err_VALUE;
         }
-        BleOutBuffer buffer = genRspBuffer();
-        if (mChannel.apduExtrange(input, mApduResult) == 0) {
-            callback.onCallback(buffer);
-        }
-        return ret;
+        mApduResult = mChannel.apduExtrange(input);
+        return EmRetCode.ERC_success_VALUE;
     }
 
     @Override
-    protected BleOutBuffer genRspBuffer() {
+    protected byte[] getResponse(int error, String msg) {
         IccResp.Builder respBuilder = IccResp.newBuilder();
         BaseResp.Builder baseBuilder = BaseResp.newBuilder();
-        baseBuilder.setEmRetCode(0);
-        baseBuilder.setRetMsg("null");
+        baseBuilder.setEmRetCode(error);
+        baseBuilder.setRetMsg(msg);
         respBuilder.setBaseResp(baseBuilder.build());
-        respBuilder.setData(ByteString.copyFrom(mApduResult));
+        if (mApduResult != null && error == 0) {
+            respBuilder.setData(ByteString.copyFrom(mApduResult));
+        }
         IccResp target = respBuilder.build();
-        byte[] targetData = target.toByteArray();
-        return new BleOutBuffer(ICC, targetData);
+        return target.toByteArray();
     }
 
     @Override

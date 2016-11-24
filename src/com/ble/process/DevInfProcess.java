@@ -3,13 +3,12 @@ package com.ble.process;
 
 import com.ble.BleContext;
 import com.ble.common.DeviceUtil;
-import com.ble.data.BleInBuffer;
-import com.ble.data.BleOutBuffer;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import BmacBp.BeijingCard.BaseResp;
 import BmacBp.BeijingCard.DevInfoReq;
 import BmacBp.BeijingCard.DevInfoResp;
+import BmacBp.BeijingCard.EmRetCode;
 
 public class DevInfProcess extends BleProcess {
 
@@ -18,36 +17,40 @@ public class DevInfProcess extends BleProcess {
     }
 
     @Override
-    public int exec(BleInBuffer request, IBleProcessCallback callback) {
-        DevInfoReq req = null;
-        try {
-            req = DevInfoReq.parseFrom(request.getData());
-        } catch (InvalidProtocolBufferException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (req == null) {
-            return -1;
-        }
-        return 0;
-    }
-
-    @Override
     public void clear() {
     }
 
     @Override
-    protected BleOutBuffer genRspBuffer() {
+    protected int onExec(byte[] data) {
+        if (mContext.isUserAuthed()) {
+            return EmRetCode.ERC_needAuth_err_VALUE;
+        }
+        DevInfoReq req = null;
+        try {
+            req = DevInfoReq.parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        if (req == null) {
+            return EmRetCode.ERC_system_err_VALUE;
+        }
+        return EmRetCode.ERC_success_VALUE;
+    }
+
+    @Override
+    protected byte[] getResponse(int error, String msg) {
         DevInfoResp.Builder respBuilder = DevInfoResp.newBuilder();
         BaseResp.Builder baseBuilder = BaseResp.newBuilder();
+        baseBuilder.setEmRetCode(error);
+        baseBuilder.setRetMsg(msg);
         respBuilder.setBaseResp(baseBuilder);
-        respBuilder.setDevId(DeviceUtil.getDeviceID());
+        respBuilder.setDevId(DeviceUtil.getDeviceID(mContext.getAndroidContext()));
         respBuilder.setDevVer(DeviceUtil.getDeviceVer());
         // battery
         respBuilder.setBattery(80);
         respBuilder.setDevName(DeviceUtil.getDeviceName());
         DevInfoResp response = respBuilder.build();
-        return new BleOutBuffer(DEVINFO, response.toByteArray());
+        return response.toByteArray();
     }
 
 }

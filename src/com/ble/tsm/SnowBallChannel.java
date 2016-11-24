@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
+import com.ble.common.ByteUtil;
 import com.tencent.tws.walletserviceproxy.service.IWalletServiceProxy;
 
 public class SnowBallChannel implements ITsmChannel {
@@ -47,17 +49,18 @@ public class SnowBallChannel implements ITsmChannel {
     }
 
     @Override
-    public int apduExtrange(byte[] inputParam, byte[] outParam) {
+    public byte[] apduExtrange(byte[] inputParam) {
         if (mWalletServiceProxy == null) {
-            return -1;
+            return null;
         }
         int[] retcode = new int[1];
+        byte[] outs = null;
         try {
-            outParam = mWalletServiceProxy.apduExchange(inputParam, retcode);
+            outs = mWalletServiceProxy.apduExchange(inputParam, retcode);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return retcode[0];
+        return outs;
     }
 
     @Override

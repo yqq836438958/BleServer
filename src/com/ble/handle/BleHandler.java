@@ -48,6 +48,9 @@ public class BleHandler implements IBleHandler {
     }
 
     private int sendResponse(final BleOutBuffer outBuffer) {
+        if (outBuffer == null) {
+            return -1;
+        }
         ThreadUtils.getWorkerHandler().post(new Runnable() {
 
             @Override
@@ -81,6 +84,12 @@ public class BleHandler implements IBleHandler {
                 onHandleData(data);
             }
         });
+        return 0;
+    }
+
+    @Override
+    public int clear() {
+        mProcess.clear();
         return 0;
     }
 }

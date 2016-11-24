@@ -79,12 +79,13 @@ public class BleServer implements IBleServer {
 
                     switch (newState) {
                         case BluetoothProfile.STATE_DISCONNECTED:
-                            Log.d(TAG, device.getName() + " 切断");
-
+                            Log.d(TAG, device.getName() + " offline");
+                            mBleContext.setClientDevice(null);
                             break;
                         case BluetoothProfile.STATE_CONNECTED:
                             Log.d(TAG, "device " + device);
-                            Log.d(TAG, device.getName() + " 接続");
+                            mBleContext.setClientDevice(device);
+                            Log.d(TAG, device.getName() + " online");
                             break;
                     }
                 }
@@ -110,12 +111,14 @@ public class BleServer implements IBleServer {
         mGattServer = mBtManager.openGattServer(mContext, mBluetoothGattServerCallback);
     }
 
-    public void addService(BluetoothGattService nameService) {
+    public void addService(BluetoothGattService nameService, String handleUUID) {
         String uuid_service = nameService.getUuid().toString();
         mGattServer.addService(nameService);
         mBleAdvertiser.startAdvertising(createAdvSettings(), createAdvData(uuid_service),
                 mAdvertiseCallback);
         mServiceMap.put(uuid_service, nameService);
+        mBleContext.setHandleCharact(handleUUID);
+        mBleContext.setCharacterList(nameService.getCharacteristics());
     }
 
     private static AdvertiseSettings createAdvSettings() {
@@ -152,8 +155,8 @@ public class BleServer implements IBleServer {
     }
 
     @Override
-    public int sendRspToClient(BluetoothDevice device, BluetoothGattCharacteristic characteristic,
-            boolean confirm) {
+    public int sendRspToClient(BluetoothDevice device,
+            BluetoothGattCharacteristic characteristic, boolean confirm) {
         if (mGattServer != null) {
             mGattServer.notifyCharacteristicChanged(device, characteristic, confirm);
         }

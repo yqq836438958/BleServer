@@ -1,6 +1,8 @@
 
 package com.ble.data;
 
+import com.ble.common.Crypto;
+
 public class BleInBuffer extends BleBuffer {
     private byte[] mTargetData = null;
     private int mDataLength = 0;
@@ -23,6 +25,7 @@ public class BleInBuffer extends BleBuffer {
         int movesize = Math.min(BLE_BUFFER_MAX_SIZE - 1, leftSize);
         System.arraycopy(data, 1, mTargetData, mDataOffset, movesize);
         mDataOffset += movesize;
+        decryptIfNeed(data);
         return 0;
     }
 
@@ -38,7 +41,16 @@ public class BleInBuffer extends BleBuffer {
                     BLE_BUFFER_MAX_SIZE - 1 - headerLen);
             mDataOffset += BLE_BUFFER_MAX_SIZE - headerLen - 1;
         }
+        decryptIfNeed(data);
         return 0;
     }
 
+    private void decryptIfNeed(byte[] data) {
+        if (!isEncrypt()) {
+            return;
+        }
+        if (data[0] == (byte) 0x01) {
+            mTargetData = Crypto.decrypt(mTargetData);
+        }
+    }
 }

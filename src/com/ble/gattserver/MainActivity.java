@@ -6,11 +6,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.ble.common.BluetoothUtil;
+import com.ble.common.ByteUtil;
+import com.ble.common.Crypto;
 import com.ble.common.ThreadUtils;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MainActivity extends Activity {
     private Button mStartBtn = null;
@@ -58,6 +62,21 @@ public class MainActivity extends Activity {
 
             }
         });
+        testCommon();
+    }
+
+    private void testCommon() {
+        String text = "0102030405060708";
+        byte[] data = ByteUtil.toByteArray(text);
+        byte[] result = Crypto.encrypt(data);
+        String textAfter = ByteUtil.toHexString(result);
+        Log.d("yqq", "encrypt textAfter:" + textAfter);
+        data = ByteUtil.toByteArray(textAfter);
+        result = Crypto.decrypt(data);
+        textAfter = ByteUtil.toHexString(result);
+        Log.d("yqq", "decrypt textAfter:" + textAfter);
+        String addr = BluetoothUtil.getBtAddr(this);
+        Log.d("yqq", "addr:" + addr);
     }
 
     private void startBleServer() {
@@ -65,7 +84,8 @@ public class MainActivity extends Activity {
         mBleServer.start();
         mBleServer.addService(new BleServiceBuilder(UUID_SAMPLE_NAME_SERVICE)
                 .withCharecter(UUID_INDICATE, BluetoothGattCharacteristic.PROPERTY_INDICATE)
-                .withCharecter(UUID_WRITE, BluetoothGattCharacteristic.PROPERTY_WRITE).build());
+                .withCharecter(UUID_WRITE, BluetoothGattCharacteristic.PROPERTY_WRITE).build(),
+                UUID_INDICATE);
     }
 
     private void stopBleServer() {

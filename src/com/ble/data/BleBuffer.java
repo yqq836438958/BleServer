@@ -26,4 +26,12 @@ public abstract class BleBuffer {
     public byte getType() {
         return mType;
     }
+
+    public boolean isEncrypt() {
+        return mHeader.isEncrypt();
+    }
+
+    public void updateContentLength(int length) {
+        mHeader.updateContentLength(length);
+    }
 }
