@@ -7,6 +7,7 @@ import android.telephony.TelephonyManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class DeviceUtil {
     public static byte[] getMacAddr(Context context) {
@@ -32,12 +33,14 @@ public class DeviceUtil {
     }
 
     public static String getDeviceID(Context context) {
-        TelephonyManager tm = (TelephonyManager) context
-                .getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm == null) {
-            return "";
+        String serialnum = "";
+        try {
+            Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class, String.class);
+            serialnum = (String) (get.invoke(c, "ro.serialno", "unknown"));
+        } catch (Exception ignored) {
         }
-        return tm.getDeviceId();
+        return serialnum;
     }
 
     public static String getDeviceVer() {

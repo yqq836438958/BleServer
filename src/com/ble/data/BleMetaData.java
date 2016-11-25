@@ -16,7 +16,7 @@ public class BleMetaData {
 
         if (realData.length < metaDataLen) {
             mFirstFlag = (byte) 0x01;
-        } else if (iDataOffset + realData.length <= totalLength) {
+        } else if (iDataOffset + metaDataLen >= totalLength) {
             mFirstFlag = (byte) 0x01;
         }
         mData[0] = mFirstFlag;
