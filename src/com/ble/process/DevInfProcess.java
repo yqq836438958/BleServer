@@ -46,8 +46,7 @@ public class DevInfProcess extends BleProcess {
         respBuilder.setBaseResp(baseBuilder);
         respBuilder.setDevId(DeviceUtil.getDeviceID(mContext.getAndroidContext()));
         respBuilder.setDevVer(DeviceUtil.getDeviceVer());
-        // battery
-        respBuilder.setBattery(80);
+        respBuilder.setBattery(DeviceUtil.getBatteryLevel());
         respBuilder.setDevName(DeviceUtil.getDeviceName());
         DevInfoResp response = respBuilder.build();
         return response.toByteArray();

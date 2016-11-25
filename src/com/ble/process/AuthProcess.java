@@ -22,6 +22,7 @@ public class AuthProcess extends BleProcess {
 
     @Override
     public void clear() {
+        mAuthType = EmDataType.EDT_plaintext;
     }
 
     @Override

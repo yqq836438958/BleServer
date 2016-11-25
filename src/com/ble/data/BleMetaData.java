@@ -4,19 +4,23 @@ package com.ble.data;
 public class BleMetaData {
     private byte mFirstFlag = (byte) 0x00;
     private byte[] mData = new byte[BleBuffer.BLE_BUFFER_MAX_SIZE];
-    private int mDataLen = 0;
 
-    public BleMetaData(BleHeader header, byte[] realData) {
-        if (header != null) {
-            mDataLen = mData.length - header.getHeaderLength() - 1;
+    public BleMetaData(BleHeader header, byte[] realData, int iDataOffset, boolean hasSetHead) {
+        int metaDataLen = 0;
+        int totalLength = header.getContentLength();
+        if (!hasSetHead) {
+            metaDataLen = mData.length - header.getHeaderLength() - 1;
         } else {
-            mDataLen = mData.length - 1;
+            metaDataLen = mData.length - 1;
         }
-        if (realData.length < mDataLen) {
+
+        if (realData.length < metaDataLen) {
+            mFirstFlag = (byte) 0x01;
+        } else if (iDataOffset + realData.length <= totalLength) {
             mFirstFlag = (byte) 0x01;
         }
         mData[0] = mFirstFlag;
-        if (header == null) {
+        if (hasSetHead) {
             System.arraycopy(realData, 0, mData, 1, realData.length);
         } else {
             System.arraycopy(header.getData(), 0, mData, 1, header.getHeaderLength());

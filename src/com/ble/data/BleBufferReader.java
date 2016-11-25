@@ -59,5 +59,6 @@ public class BleBufferReader {
 
     public void clearAll() {
         mInBuffers.clear();
+        mBufferIndex = -1;
     }
 }

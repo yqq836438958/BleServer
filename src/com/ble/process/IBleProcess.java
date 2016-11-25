@@ -6,7 +6,7 @@ import com.ble.data.BleOutBuffer;
 
 public interface IBleProcess {
     public static interface IBleProcessCallback {
-        public int onCallback(BleOutBuffer buffer);
+        public int onCallback(int ret, BleOutBuffer buffer);
     }
 
     public static final byte AUTH = (byte) 0xA0;

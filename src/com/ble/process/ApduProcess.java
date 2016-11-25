@@ -3,6 +3,7 @@ package com.ble.process;
 
 import com.ble.BleContext;
 import com.ble.tsm.ITsmChannel;
+import com.ble.tsm.SnowBallChannel;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -17,7 +18,7 @@ public class ApduProcess extends BleProcess {
 
     public ApduProcess(BleContext context) {
         super(context, IBleProcess.ICC);
-        mChannel = context.getTsmChannel();
+        mChannel = new SnowBallChannel(mContext.getAndroidContext());
     }
 
     @Override

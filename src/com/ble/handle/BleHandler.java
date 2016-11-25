@@ -15,13 +15,16 @@ import com.ble.process.BleProcess;
 import com.ble.process.IBleProcess;
 import com.ble.process.IBleProcess.IBleProcessCallback;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import BmacBp.BeijingCard.EmRetCode;
 
 public class BleHandler implements IBleHandler {
     private BleBufferReader mReader = null;
     private BleContext mContext = null;
     private IBleServer mServer = null;
-    private IBleProcess mProcess = null;
+    private List<IBleProcess> mProcessList = new ArrayList<IBleProcess>();
 
     public BleHandler(BleContext context, IBleServer server) {
         mContext = context;
@@ -36,15 +39,33 @@ public class BleHandler implements IBleHandler {
         }
         BleInBuffer inBuffer = mReader.getCurIndexBuffer();
         byte type = inBuffer.getType();
-        mProcess = BleProcess.getProcess(mContext, type);
-        mProcess.exec(inBuffer, new IBleProcessCallback() {
+
+        IBleProcess process = BleProcess.getProcess(mContext, type);
+        process.exec(inBuffer, new IBleProcessCallback() {
 
             @Override
-            public int onCallback(BleOutBuffer buffer) {
+            public int onCallback(int ret, BleOutBuffer buffer) {
                 mReader.clearAll();
+                if (ret == EmRetCode.ERC_system_err_VALUE) {
+                    clear();
+                }
                 return sendResponse(buffer);
             }
         });
+        addProcessList(process);
+    }
+
+    private void addProcessList(IBleProcess _process) {
+        boolean isExist = false;
+        for (IBleProcess process : mProcessList) {
+            if (process.getType() == _process.getType()) {
+                isExist = true;
+                break;
+            }
+        }
+        if (!isExist) {
+            mProcessList.add(_process);
+        }
     }
 
     private int sendResponse(final BleOutBuffer outBuffer) {
@@ -62,6 +83,9 @@ public class BleHandler implements IBleHandler {
     }
 
     private void onSendResponse(BleOutBuffer outBuffer) {
+        if (mServer == null) {
+            return;
+        }
         List<BleMetaData> dataList = outBuffer.getDataList();
         BluetoothGattCharacteristic character = mContext.getCurGattCharacteristc();
         for (BleMetaData data : dataList) {
@@ -89,7 +113,15 @@ public class BleHandler implements IBleHandler {
 
     @Override
     public int clear() {
-        mProcess.clear();
+        for (IBleProcess process : mProcessList) {
+            process.clear();
+        }
+        return 0;
+    }
+
+    @Override
+    public int create() {
+        // TODO Auto-generated method stub
         return 0;
     }
 }

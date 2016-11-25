@@ -23,7 +23,6 @@ import com.ble.handle.BleHandler;
 import com.ble.handle.IBleHandler;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class BleServer implements IBleServer {
     public static final String TAG = "BleServer";
@@ -80,10 +79,12 @@ public class BleServer implements IBleServer {
                     switch (newState) {
                         case BluetoothProfile.STATE_DISCONNECTED:
                             Log.d(TAG, device.getName() + " offline");
+                            mHandler.clear();
                             mBleContext.setClientDevice(null);
                             break;
                         case BluetoothProfile.STATE_CONNECTED:
                             Log.d(TAG, "device " + device);
+                            mHandler.create();
                             mBleContext.setClientDevice(device);
                             Log.d(TAG, device.getName() + " online");
                             break;

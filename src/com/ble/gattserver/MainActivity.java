@@ -9,7 +9,9 @@ import android.widget.TextView;
 import com.ble.common.BluetoothUtil;
 import com.ble.common.ByteUtil;
 import com.ble.common.Crypto;
+import com.ble.common.DeviceUtil;
 import com.ble.common.ThreadUtils;
+import com.test.TestCase;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -40,8 +42,8 @@ public class MainActivity extends Activity {
 
                     @Override
                     public void run() {
-                        startBleServer();
-
+                        // startBleServer();
+                        TestCase.test(MainActivity.this);
                     }
                 });
 
@@ -77,6 +79,8 @@ public class MainActivity extends Activity {
         Log.d("yqq", "decrypt textAfter:" + textAfter);
         String addr = BluetoothUtil.getBtAddr(this);
         Log.d("yqq", "addr:" + addr);
+        int lev = DeviceUtil.getBatteryLevel();
+        Log.d("yqq", "lev:" + lev);
     }
 
     private void startBleServer() {

@@ -4,25 +4,46 @@ package com.ble.process;
 import com.ble.BleContext;
 import com.ble.data.BleInBuffer;
 import com.ble.data.BleOutBuffer;
-import com.ble.process.IBleProcess.IBleProcessCallback;
 
 public abstract class BleProcess implements IBleProcess {
     private byte mType = 0;
     protected BleContext mContext = null;
+    private static IBleProcess mAuthProcess = null;
+    private static IBleProcess mIccProcess = null;
+    private static IBleProcess mDevInfoProcess = null;
+    private static IBleProcess mPowerProcess = null;
 
     public BleProcess(BleContext context, byte type) {
         mContext = context;
         mType = type;
     }
 
-    public static BleProcess getProcess(BleContext context, byte type) {
-        BleProcess process = null;
+    public static IBleProcess getProcess(BleContext context, byte type) {
+        IBleProcess process = null;
         switch (type) {
             case IBleProcess.AUTH:
-                process = new AuthProcess(context);
+                if (mAuthProcess == null) {
+                    mAuthProcess = new AuthProcess(context);
+                }
+                process = mAuthProcess;
                 break;
             case IBleProcess.ICC:
-                process = new ApduProcess(context);
+                if (mIccProcess == null) {
+                    mIccProcess = new ApduProcess(context);
+                }
+                process = mIccProcess;
+                break;
+            case IBleProcess.DEVINFO:
+                if (mDevInfoProcess == null) {
+                    mDevInfoProcess = new DevInfProcess(context);
+                }
+                process = mDevInfoProcess;
+                break;
+            case IBleProcess.POWER:
+                if (mPowerProcess == null) {
+                    mPowerProcess = new DevPowerProcess(context);
+                }
+                process = mPowerProcess;
                 break;
             default:
                 break;
@@ -53,7 +74,7 @@ public abstract class BleProcess implements IBleProcess {
             return;
         }
         byte[] result = getResponse(ret, desc);
-        callback.onCallback(new BleOutBuffer(mType, result, isRequestCrypt));
+        callback.onCallback(ret, new BleOutBuffer(mType, result, isRequestCrypt));
     }
 
 }

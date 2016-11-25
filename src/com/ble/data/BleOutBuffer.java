@@ -32,18 +32,20 @@ public class BleOutBuffer extends BleBuffer {
         int iDataOffset = 0;
         BleHeader tmpHead = mHeader;
         while (iDataOffset < bufferTotalLength) {
-            if (!hasSetHead) {
-                hasSetHead = true;
-            } else {
+            if (hasSetHead) {
                 operationLenth = Math.min(bufferTotalLength - iDataOffset, BLE_BUFFER_MAX_SIZE - 1);
-                tmpHead = null;
+            } else {
+                operationLenth = Math.min(bufferTotalLength - iDataOffset, operationLenth);
             }
             tmpData = new byte[operationLenth];
             System.arraycopy(data, iDataOffset, tmpData, 0,
                     Math.min(bufferTotalLength - iDataOffset, operationLenth));
-            BleMetaData metaData = new BleMetaData(tmpHead, tmpData);
+            BleMetaData metaData = new BleMetaData(tmpHead, tmpData, iDataOffset, hasSetHead);
             mOutDataList.add(metaData);
             iDataOffset += operationLenth;
+            if (!hasSetHead) {
+                hasSetHead = true;
+            }
         }
     }
 
