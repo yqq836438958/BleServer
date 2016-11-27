@@ -8,7 +8,9 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
+import com.ble.common.ByteUtil;
 import com.tencent.tws.walletserviceproxy.service.IWalletServiceProxy;
 
 public class SnowBallChannel implements ITsmChannel {
@@ -124,6 +126,12 @@ public class SnowBallChannel implements ITsmChannel {
         if (waitReadyOrTimeout() != SERVICE_STATE.BOUND) {
             return null;
         }
+        if (TextUtils.isEmpty(mAid)) {
+            byte[] aid = tryGetAIDIfNeed(inputParam);
+            if (aid != null) {
+                selectAID(ByteUtil.toHexString(aid));
+            }
+        }
         int[] retcode = new int[1];
         byte[] outs = null;
         try {
@@ -136,6 +144,9 @@ public class SnowBallChannel implements ITsmChannel {
 
     @Override
     public int selectAID(String instanceId) {
+        if (TextUtils.isEmpty(instanceId)) {
+            return -1;
+        }
         if (waitReadyOrTimeout() != SERVICE_STATE.BOUND) {
             return -1;
         }
@@ -164,6 +175,7 @@ public class SnowBallChannel implements ITsmChannel {
             e.printStackTrace();
         }
         unbindService();
+        mAid = null;
         return 0;
     }
 
@@ -210,5 +222,20 @@ public class SnowBallChannel implements ITsmChannel {
         // 这里是绑定超时，简化处理已绑定出错处理
 
         return SERVICE_STATE.ERROR;
+    }
+
+    private byte[] tryGetAIDIfNeed(byte[] apdu) {
+        byte[] result = null;
+        if (apdu.length < 5) {
+            return result;
+        }
+        if (apdu[0] == 0x00 && apdu[1] == (byte) 0xA4 && apdu[2] == 0x04) {
+            int aidLen = apdu[4];
+            if (aidLen != 0) {
+                result = new byte[aidLen];
+                System.arraycopy(apdu, 5, result, 0, aidLen);
+            }
+        }
+        return result;
     }
 }

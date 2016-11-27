@@ -32,6 +32,11 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="com.ble.service.BootupService"
+            android:exported="true"
+            android:process=":remote" />
+
         <receiver android:name="com.ble.receiver.BootCompletedReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
