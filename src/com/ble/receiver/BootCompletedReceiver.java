@@ -11,14 +11,18 @@ import com.ble.service.BootupService;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
-    public static final String TAG = "BootCompletedReceiver";
+    public static final String TAG = "BLE";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "recevie boot completed ... ");
-        if (!RunEnv.isBeijingTongExist(context)) {
+        if (/* !RunEnv.isBeijingTongExist(context) */!RunEnv.isBleServerOn(context)) {
+            Log.d(TAG, "ble not on ");
             return;
         }
-        context.startService(new Intent(context, BootupService.class));
+        Log.d(TAG, "ble on,start now...");
+        Intent serviceIntent = new Intent(context, BootupService.class);
+        serviceIntent.putExtra("bleserver_enable", 1);
+        context.startService(serviceIntent);
     }
 }

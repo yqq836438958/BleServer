@@ -1,10 +1,8 @@
 
 package com.ble.service;
 
-import android.app.Service;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import com.ble.config.RunEnv;
@@ -12,14 +10,28 @@ import com.ble.gattserver.BleServer;
 import com.ble.gattserver.BleServiceBuilder;
 
 public class BootupService extends BaseService {
+    public static final String TAG = "BLE";
     private BleServer mServer = null;
+    private boolean isServerOn = false;
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (!RunEnv.isBeijingTongExist(getApplicationContext())) {
+        Log.d(TAG, "SRV onStart!");
+        // if (!RunEnv.isBeijingTongExist(getApplicationContext())) {
+        // this.stopSelf();
+        // return;
+        // }
+        int enable = intent.getIntExtra("bleserver_enable", 0);
+        Log.d(TAG, "SRV bleserver_enable:" + enable);
+        Log.d(TAG, "SRV isServerOn:" + isServerOn);
+        if (enable == 0) {
             this.stopSelf();
             return;
         }
+        if (isServerOn) {
+            return;
+        }
+        Log.d(TAG, "SRV start ok!");
         if (mServer == null) {
             mServer = new BleServer(getApplicationContext());
         }
@@ -29,6 +41,8 @@ public class BootupService extends BaseService {
                 .withCharecter(RunEnv.UUID_WRITE, BluetoothGattCharacteristic.PROPERTY_WRITE)
                 .build(),
                 RunEnv.UUID_INDICATE);
+        isServerOn = true;
+        RunEnv.saveBleServerOn(getApplicationContext(), 1);
     }
 
     @Override
@@ -37,6 +51,7 @@ public class BootupService extends BaseService {
             mServer.deleteService(RunEnv.BLESRV_UUID);
             mServer.stop();
         }
+        isServerOn = false;
         super.onDestroy();
     }
 }

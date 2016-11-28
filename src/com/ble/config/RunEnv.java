@@ -3,6 +3,7 @@ package com.ble.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,5 +30,20 @@ public class RunEnv {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void saveBleServerOn(Context context, int enable) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("ble_server",
+                Context.MODE_WORLD_READABLE);
+        Editor editor = sharedPreferences.edit();
+        editor.putInt("bleserver_enable", enable);
+        editor.putString("test", "good");
+        editor.commit();
+    }
+
+    public static boolean isBleServerOn(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("ble_server",
+                Context.MODE_WORLD_READABLE);
+        return sharedPreferences.getInt("bleserver_enable", 0) == 1;
     }
 }

@@ -36,8 +36,7 @@ public class ApduProcess extends BleProcess {
             return EmRetCode.ERC_system_err_VALUE;
         }
         byte[] input = req.getData().toByteArray();
-        String instanceId = "A000000151000000";
-        if (mChannel.selectAID(instanceId) != 0) {
+        if (mChannel.selectAID("9156000014010001") != 0) {
             return EmRetCode.ERC_system_err_VALUE;
         }
         mApduResult = mChannel.apduExtrange(input);
