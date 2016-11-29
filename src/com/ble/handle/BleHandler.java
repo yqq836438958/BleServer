@@ -116,6 +116,9 @@ public class BleHandler implements IBleHandler {
         for (IBleProcess process : mProcessList) {
             process.clear();
         }
+        if (mProcessList != null) {
+            mProcessList.clear();
+        }
         return 0;
     }
 

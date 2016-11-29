@@ -2,7 +2,6 @@
 package com.ble.common;
 
 import android.content.Context;
-import android.telephony.TelephonyManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

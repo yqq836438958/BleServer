@@ -16,6 +16,7 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.os.ParcelUuid;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ble.BleContext;
@@ -36,6 +37,7 @@ public class BleServer implements IBleServer {
     private BluetoothGattServerCallback mBluetoothGattServerCallback = null;
     private HashMap<String, BluetoothGattService> mServiceMap = new HashMap<String, BluetoothGattService>();
     private IBleHandler mHandler = null;
+    private boolean mServerOn = false;
 
     public BleServer(Context ctx) {
         mContext = ctx;
@@ -61,12 +63,14 @@ public class BleServer implements IBleServer {
             public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                 super.onStartSuccess(settingsInEffect);
                 Log.d(TAG, "onStartSuccess");
+                mServerOn = true;
             }
 
             @Override
             public void onStartFailure(int errorCode) {
                 super.onStartFailure(errorCode);
                 Log.d(TAG, "onStartFailure " + errorCode);
+                mServerOn = false;
             }
         };
         mBluetoothGattServerCallback = new BluetoothGattServerCallback() {
@@ -78,15 +82,14 @@ public class BleServer implements IBleServer {
 
                     switch (newState) {
                         case BluetoothProfile.STATE_DISCONNECTED:
-                            Log.d(TAG, device.getName() + " offline");
+                            Log.d(TAG, device.getAddress() + " offline");
                             mHandler.clear();
                             mBleContext.setClientDevice(null);
                             break;
                         case BluetoothProfile.STATE_CONNECTED:
-                            Log.d(TAG, "device " + device);
+                            Log.d(TAG, device.getAddress() + " online");
                             mHandler.create();
                             mBleContext.setClientDevice(device);
-                            Log.d(TAG, device.getName() + " online");
                             break;
                     }
                 }
@@ -152,6 +155,9 @@ public class BleServer implements IBleServer {
     }
 
     public void stop() {
+        if (mHandler != null) {
+            mHandler.clear();
+        }
         mGattServer.close();
     }
 
@@ -164,4 +170,7 @@ public class BleServer implements IBleServer {
         return 0;
     }
 
+    public boolean isOpen() {
+        return mServerOn;
+    }
 }

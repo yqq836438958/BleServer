@@ -9,9 +9,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class RunEnv {
-    public static String BLESRV_UUID = "0000b155-0000-1000-8000-00805f9b34fb";
-    public static String UUID_WRITE = "0000b177-0000-1000-8000-00805f9b34fb";
-    public static String UUID_INDICATE = "0000b155-0000-1000-8000-00805f9b34fb";
+    public static String BLESRV_UUID = "0000b001-0000-1000-8000-00805f9b34fb";
+    public static String UUID_WRITE = "0000b002-0000-1000-8000-00805f9b34fb";
+    public static String UUID_INDICATE = "0000b003-0000-1000-8000-00805f9b34fb";
 
     public static boolean isBeijingTongExist(Context context) {
         try {
