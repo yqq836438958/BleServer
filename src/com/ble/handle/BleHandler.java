@@ -90,7 +90,7 @@ public class BleHandler implements IBleHandler {
         BluetoothGattCharacteristic character = mContext.getCurGattCharacteristc();
         for (BleMetaData data : dataList) {
             character.setValue(data.get());
-            mServer.sendRspToClient(mContext.getClientDevice(), character, true);
+            mServer.sendRspToClient(mContext.getClientDevice(), character, false);
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

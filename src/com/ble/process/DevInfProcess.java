@@ -22,7 +22,7 @@ public class DevInfProcess extends BleProcess {
 
     @Override
     protected int onExec(byte[] data) {
-        if (mContext.isUserAuthed()) {
+        if (!mContext.isUserAuthed()) {
             return EmRetCode.ERC_needAuth_err_VALUE;
         }
         DevInfoReq req = null;

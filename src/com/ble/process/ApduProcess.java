@@ -23,7 +23,7 @@ public class ApduProcess extends BleProcess {
 
     @Override
     protected int onExec(byte[] data) {
-        if (mContext.isUserAuthed()) {
+        if (!mContext.isUserAuthed()) {
             return EmRetCode.ERC_needAuth_err_VALUE;
         }
         IccReq req = null;
@@ -36,7 +36,8 @@ public class ApduProcess extends BleProcess {
             return EmRetCode.ERC_system_err_VALUE;
         }
         byte[] input = req.getData().toByteArray();
-        if (mChannel.selectAID("9156000014010001") != 0) {
+        if(mChannel.selectAID("A000000151000000")!= 0) {
+//        if (mChannel.selectAID("9156000014010001") != 0) {
             return EmRetCode.ERC_system_err_VALUE;
         }
         mApduResult = mChannel.apduExtrange(input);
