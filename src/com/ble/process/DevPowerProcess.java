@@ -20,7 +20,7 @@ public class DevPowerProcess extends BleProcess {
 
     @Override
     public void clear() {
-
+        mPower = EmDevPower.EDP_power_off_VALUE;
     }
 
     @Override
