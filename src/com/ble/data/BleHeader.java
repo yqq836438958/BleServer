@@ -10,7 +10,7 @@ public class BleHeader {
     private int bCmdId;
     private boolean bEncFlag = false;
 
-    public BleHeader(byte[] data, int cmd, boolean encFlag) {
+    public BleHeader(byte[] data, byte cmd, boolean encFlag) {
         mHeadData = new byte[BLE_HEADER_LEN];
         bCmdId = cmd;
         bEncFlag = encFlag;

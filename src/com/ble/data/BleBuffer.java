@@ -4,7 +4,7 @@ package com.ble.data;
 public abstract class BleBuffer {
     protected BleHeader mHeader = null;
     public static final int BLE_BUFFER_MAX_SIZE = 20;
-    private byte mType = 0;
+    private byte mType = (byte) 0x00;
 
     public BleBuffer(byte cmd, byte[] data, boolean isInput) {
         this(cmd, data, false, isInput);
@@ -24,7 +24,7 @@ public abstract class BleBuffer {
     }
 
     public byte getType() {
-        return mType;
+        return (byte) mType;
     }
 
     public boolean isEncrypt() {

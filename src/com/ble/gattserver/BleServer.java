@@ -131,7 +131,7 @@ public class BleServer implements IBleServer {
                 super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
                         responseNeeded, offset, value);
                 mHandler.handle(value);
-                // Log.d(TAG, ByteUtil.toHexString(value));
+                 Log.d(TAG, ByteUtil.toHexString(value));
                 // byte[] tmp = new byte[1];
                 // tmp[0] = (byte) index++;
                 if (mGattServer != null) {
