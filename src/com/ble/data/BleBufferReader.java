@@ -2,6 +2,7 @@
 package com.ble.data;
 
 import com.ble.common.ErrCode;
+import com.ble.config.RunEnv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,10 @@ public class BleBufferReader {
     }
 
     public int readBleBuffer(byte[] data) {
-        if (data == null || data.length != BleBuffer.BLE_BUFFER_MAX_SIZE) {
+        if (data == null) {
+            return ErrCode.ERR_EXCEPTION;
+        }
+        if (RunEnv.sBleDatPackAutoComp && data.length != BleBuffer.BLE_BUFFER_MAX_SIZE) {
             return ErrCode.ERR_EXCEPTION;
         }
         if (data[1] == (byte) 0xBC && data[2] == (byte) 0x01) {
@@ -41,7 +45,10 @@ public class BleBufferReader {
             return ErrCode.ERR_EXCEPTION;
         }
         mSegmentIndex++;
-        buffer.put(data);
+
+        if (buffer.put(data) != 0) {
+            return ErrCode.ERR_EXCEPTION;
+        }
         if (data[0] == (byte) 0x01) {
             mSegmentIndex = -1;
             // 重置
@@ -60,5 +67,6 @@ public class BleBufferReader {
     public void clearAll() {
         mInBuffers.clear();
         mBufferIndex = -1;
+        mSegmentIndex = -1;
     }
 }

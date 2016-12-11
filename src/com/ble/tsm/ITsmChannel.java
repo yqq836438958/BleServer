@@ -1,12 +1,11 @@
 
 package com.ble.tsm;
 
-
 public interface ITsmChannel {
 
     public byte[] apduExtrange(byte[] inputParam);
 
-    public int selectAID(String instanceId);
+    public byte[] selectAID(String instanceId, int retCode);
 
     public int close();
 }

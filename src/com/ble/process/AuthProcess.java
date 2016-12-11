@@ -59,7 +59,7 @@ public class AuthProcess extends BleProcess {
             resp.setAuthData(ByteString.copyFrom(tmp));
         }
         AuthResp result = resp.build();
-        mContext.setUserAuth(true);
+        mContext.auth();
         return result.toByteArray();
     }
 

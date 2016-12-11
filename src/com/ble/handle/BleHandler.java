@@ -41,6 +41,7 @@ public class BleHandler implements IBleHandler {
         byte type = inBuffer.getType();
 
         IBleProcess process = BleProcess.getProcess(mContext, type);
+        addProcessList(process);
         process.exec(inBuffer, new IBleProcessCallback() {
 
             @Override
@@ -49,10 +50,16 @@ public class BleHandler implements IBleHandler {
                 if (ret == EmRetCode.ERC_system_err_VALUE) {
                     clear();
                 }
-                return sendResponse(buffer);
+                return onSendResponse(buffer);
+            }
+
+            @Override
+            public void onShutdown() {
+                if (mServer != null) {
+                    mServer.onShutdown();
+                }
             }
         });
-        addProcessList(process);
     }
 
     private void addProcessList(IBleProcess _process) {
@@ -68,23 +75,9 @@ public class BleHandler implements IBleHandler {
         }
     }
 
-    private int sendResponse(final BleOutBuffer outBuffer) {
-        if (outBuffer == null) {
+    private int onSendResponse(BleOutBuffer outBuffer) {
+        if (mServer == null || outBuffer == null) {
             return -1;
-        }
-        ThreadUtils.getWorkerHandler().post(new Runnable() {
-
-            @Override
-            public void run() {
-                onSendResponse(outBuffer);
-            }
-        });
-        return 0;
-    }
-
-    private void onSendResponse(BleOutBuffer outBuffer) {
-        if (mServer == null) {
-            return;
         }
         List<BleMetaData> dataList = outBuffer.getDataList();
         BluetoothGattCharacteristic character = mContext.getCurGattCharacteristc();
@@ -97,6 +90,7 @@ public class BleHandler implements IBleHandler {
                 e.printStackTrace();
             }
         }
+        return 0;
     }
 
     @Override

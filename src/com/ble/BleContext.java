@@ -4,6 +4,7 @@ package com.ble;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,39 @@ public class BleContext {
     private Context mAndroidContext = null;
     private String mHandleUUID = null;
     private boolean bUserAuth = false;
+    private boolean bSePower = false;
+    private String mAuthedDeviceAddr = null;
+
+    public boolean isSePoweOn() {
+        return bSePower;
+    }
+
+    public void setPowerOn(boolean val) {
+        bSePower = val;
+    }
 
     public boolean isUserAuthed() {
         return bUserAuth;
     }
 
-    public void setUserAuth(boolean auth) {
-        bUserAuth = auth;
+    public void auth() {
+//        if (mClientDevice == null) {
+//            bUserAuth = false;
+//            return;
+//        }
+//        String device = mClientDevice.getAddress();
+//        if (TextUtils.isEmpty(device)) {
+//            bUserAuth = false;
+//            return;
+//        }
+//        if (!TextUtils.isEmpty(mAuthedDeviceAddr)
+//                && !device.equalsIgnoreCase(mAuthedDeviceAddr)) {
+//            // 已经有存在的设备了，那么就无法认证成功
+//            bUserAuth = false;
+//            return;
+//        }
+        bUserAuth = true;
+//        mAuthedDeviceAddr = device;
     }
 
     public BleContext(Context context) {
@@ -33,8 +60,9 @@ public class BleContext {
     }
 
     public void setClientDevice(BluetoothDevice device) {
-        if (mClientDevice != device) {
-            mClientDevice = device;
+        mClientDevice = device;
+        if (device == null) {
+            mAuthedDeviceAddr = null;
         }
     }
 

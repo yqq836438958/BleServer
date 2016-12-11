@@ -6,8 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.ble.common.Contants;
 import com.ble.config.RunEnv;
-import com.ble.service.BootupService;
+import com.ble.service.BleSrvService;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
@@ -21,8 +22,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
             return;
         }
         Log.d(TAG, "ble on,start now...");
-        Intent serviceIntent = new Intent(context, BootupService.class);
-        serviceIntent.putExtra("bleserver_enable", 1);
+        Intent serviceIntent = new Intent(context, BleSrvService.class);
+        serviceIntent.putExtra(Contants.KEY_BLE, 1);
         context.startService(serviceIntent);
     }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <property file="local.properties" />
+
+    <property file="project.properties" />
+
+    <property environment="env" />
+
+	<condition property="qrom.sdk.dir" value="${env.QROM_SDK_BASE_PATH}">
+        <isset property="env.QROM_SDK_BASE_PATH" />
+    </condition>
+
+    <fail message="qrom.sdk.dir is missing." unless="qrom.sdk.dir" />
+
+    <import file="${qrom.sdk.dir}/app_build_scripts/build_server.xml" />
+
+</project>

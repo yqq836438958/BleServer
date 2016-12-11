@@ -1,0 +1,4 @@
+qrom_lib_path=E:/wear_sdk/qrom_widget_sdk2.0/QromWidgetTools/tws-res
+include_qrom_res=1
+qrom_package_id=0x7b
+qrom_jar_path=E:/wear_sdk/qrom_widget_sdk2.0/QromWidgetTools/framework-tws-res.jar

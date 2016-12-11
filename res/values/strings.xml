@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BleGattServer</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">北京一卡通助手</string>
+    <string name="app_summary">开启助手后，可在手机北京一卡通App中充值、余额查询</string>
+    <string name="srv_init">正在打开助手</string>
+    <string name="srv_ok">助手已开启</string>
+    <string name="srv_off">助手已关闭</string>
+    <string name="srv_error">助手开启异常</string>
+    <string name="srv_connect_online">助手已连接手机</string>
+    <string name="srv_connect_offline">助手未连接手机</string>
     <string name="action_settings">Settings</string>
+    <string name="blekey1">0807060504030201</string>
+    <string name="title_activity_ble_main">BleMainActivity</string>
 
 </resources>

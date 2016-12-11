@@ -1,11 +1,17 @@
 
 package com.ble.data;
 
+import com.ble.config.RunEnv;
+
 public class BleMetaData {
     private byte mFirstFlag = (byte) 0x00;
     private byte[] mData = new byte[BleBuffer.BLE_BUFFER_MAX_SIZE];
 
     public BleMetaData(BleHeader header, byte[] realData, int iDataOffset, boolean hasSetHead) {
+        if (!RunEnv.sBleDatPackAutoComp) {
+            int tmpLen = realData.length + 1 + (hasSetHead ? 0 : header.getHeaderLength());
+            mData = new byte[tmpLen];
+        }
         int metaDataLen = 0;
         int totalLength = header.getContentLength();
         if (!hasSetHead) {

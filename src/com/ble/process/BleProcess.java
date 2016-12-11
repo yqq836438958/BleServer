@@ -4,8 +4,11 @@ package com.ble.process;
 import com.ble.BleContext;
 import com.ble.data.BleInBuffer;
 import com.ble.data.BleOutBuffer;
+import com.ble.tsm.ITsmChannel;
+import com.ble.tsm.TsmChannelFactory;
 
 public abstract class BleProcess implements IBleProcess {
+    protected static final String TAG = "BLE";
     private byte mType = 0;
     protected BleContext mContext = null;
     private static IBleProcess mAuthProcess = null;
@@ -20,6 +23,7 @@ public abstract class BleProcess implements IBleProcess {
 
     public static IBleProcess getProcess(BleContext context, byte type) {
         IBleProcess process = null;
+        ITsmChannel channel = null;
         switch (type) {
             case IBleProcess.AUTH:
                 if (mAuthProcess == null) {
@@ -28,8 +32,9 @@ public abstract class BleProcess implements IBleProcess {
                 process = mAuthProcess;
                 break;
             case IBleProcess.ICC:
+                channel = TsmChannelFactory.get().getDefaultChannel(context.getAndroidContext());
                 if (mIccProcess == null) {
-                    mIccProcess = new ApduProcess(context);
+                    mIccProcess = new ApduProcess(context, channel);
                 }
                 process = mIccProcess;
                 break;
@@ -40,8 +45,9 @@ public abstract class BleProcess implements IBleProcess {
                 process = mDevInfoProcess;
                 break;
             case IBleProcess.POWER:
+                channel = TsmChannelFactory.get().getDefaultChannel(context.getAndroidContext());
                 if (mPowerProcess == null) {
-                    mPowerProcess = new DevPowerProcess(context);
+                    mPowerProcess = new DevPowerProcess(context, channel);
                 }
                 process = mPowerProcess;
                 break;
@@ -60,21 +66,19 @@ public abstract class BleProcess implements IBleProcess {
     public int exec(BleInBuffer request, IBleProcessCallback callback) {
         boolean isRequestCrypt = request.isEncrypt();
         int ret = onExec(request.getData());
-        postExecResult(ret, "", isRequestCrypt, callback);
-        return ret;
+        return postExecResult(ret, "", isRequestCrypt, callback);
     }
 
     protected abstract int onExec(byte[] data);
 
     protected abstract byte[] getResponse(int error, String msg);
 
-    private void postExecResult(int ret, String desc, Boolean isRequestCrypt,
+    private int postExecResult(int ret, String desc, Boolean isRequestCrypt,
             IBleProcessCallback callback) {
         if (callback == null) {
-            return;
+            return -1;
         }
         byte[] result = getResponse(ret, desc);
-        callback.onCallback(ret, new BleOutBuffer(mType, result, isRequestCrypt));
+        return callback.onCallback(ret, new BleOutBuffer(mType, result, isRequestCrypt));
     }
-
 }

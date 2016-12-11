@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="walletbleserver" default="build">
+
+    <import file="build_client.xml" />
+
+    <!-- 自定义逻辑 -->
+    <!-- 例如工程需要的jar路径等 -->
+
+</project>

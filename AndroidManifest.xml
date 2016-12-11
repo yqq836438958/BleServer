@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ble.gattserver"
+    package="com.pacewear.walletble"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -21,17 +21,27 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/TwsApiTheme" >
         <service
-            android:name="com.ble.service.BootupService"
-            android:exported="true"/>
+            android:name="com.ble.service.BleSrvService"
+            android:exported="true" />
 
-        <receiver android:name="com.ble.receiver.BootCompletedReceiver" >
+        <!--
+             <receiver android:name="com.ble.receiver.BootCompletedReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
+        </receiver>
+        -->
+        <activity
+            android:name=".BleMainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

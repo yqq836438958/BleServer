@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
+import android.telecom.Log;
 import android.text.TextUtils;
 
 import com.ble.common.ByteUtil;
@@ -16,7 +17,6 @@ import com.tencent.tws.walletserviceproxy.service.IWalletServiceProxy;
 public class SnowBallChannel implements ITsmChannel {
     private IWalletServiceProxy mWalletServiceProxy = null;
     private Context mContext = null;
-    private String mAid = null;
     private final Object mLock = new Object();
 
     /**
@@ -126,12 +126,12 @@ public class SnowBallChannel implements ITsmChannel {
         if (waitReadyOrTimeout() != SERVICE_STATE.BOUND) {
             return null;
         }
-        if (TextUtils.isEmpty(mAid)) {
-            byte[] aid = tryGetAIDIfNeed(inputParam);
-            if (aid != null) {
-                selectAID(ByteUtil.toHexString(aid));
-            }
+        byte[] aid = tryGetAIDIfNeed(inputParam);
+        if (aid != null) {
+            int selectRet = 0;
+            return selectAID(ByteUtil.toHexString(aid), selectRet);
         }
+        Log.d("apdu", "input:" + ByteUtil.toHexString(inputParam));
         int[] retcode = new int[1];
         byte[] outs = null;
         try {
@@ -143,26 +143,23 @@ public class SnowBallChannel implements ITsmChannel {
     }
 
     @Override
-    public int selectAID(String instanceId) {
+    public byte[] selectAID(String instanceId, int ret) {
         if (TextUtils.isEmpty(instanceId)) {
-            return -1;
+            return null;
         }
         if (waitReadyOrTimeout() != SERVICE_STATE.BOUND) {
-            return -1;
-        }
-        if (instanceId.equalsIgnoreCase(mAid)) {
-            return 0;
+            return null;
         }
         int[] resultCode = new int[1];
+        byte[] result = null;
         try {
-            mWalletServiceProxy.selectAid(instanceId, resultCode);
+            result = mWalletServiceProxy.selectAid(instanceId, resultCode);
         } catch (RemoteException e) {
+            result = null;
             e.printStackTrace();
         }
-        if (resultCode[0] == 0) {
-            mAid = instanceId;
-        }
-        return resultCode[0];
+        ret = resultCode[0];
+        return result;
     }
 
     @Override
@@ -175,7 +172,6 @@ public class SnowBallChannel implements ITsmChannel {
             e.printStackTrace();
         }
         unbindService();
-        mAid = null;
         return 0;
     }
 

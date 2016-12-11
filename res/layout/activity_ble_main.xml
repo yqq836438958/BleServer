@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tws="http://schemas.android.com/apk/res/com.tencent.tws"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000" >
+
+    <com.tencent.tws.widget.TwsEmptyView
+        android:id="@+id/emptyview"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-light"
+        tws:textSummary="为了保障公司资产，123abcABCfghFGH，在开发机临时申请访问外网时，请您谨慎选择，目的是阻止木马连接外网传输敏感数据。"
+        tws:textTitle="标题测试" />
+
+    <com.tencent.tws.widget.TwsButton
+        android:id="@+id/circle_light_green"
+        style="?com.tencent.tws:attr/twsButtonCircleLightGreenStyle"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:text="关闭" />
+
+</FrameLayout>

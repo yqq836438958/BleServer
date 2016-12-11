@@ -62,4 +62,7 @@ public abstract class BaseService extends Service {
 
     protected abstract void onHandleIntent(Intent intent);
 
+    protected Handler getServiceHandler() {
+        return mServiceHandler;
+    }
 }
