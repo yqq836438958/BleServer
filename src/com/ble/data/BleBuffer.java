@@ -24,7 +24,7 @@ public abstract class BleBuffer {
     }
 
     public byte getType() {
-        return (byte) mType;
+        return mType;
     }
 
     public boolean isEncrypt() {

@@ -27,9 +27,9 @@ public class BleBufferReader {
         if (data == null) {
             return ErrCode.ERR_EXCEPTION;
         }
-        if (RunEnv.sBleDatPackAutoComp && data.length != BleBuffer.BLE_BUFFER_MAX_SIZE) {
-            return ErrCode.ERR_EXCEPTION;
-        }
+//        if (RunEnv.sBleDatPackAutoComp && data.length != BleBuffer.BLE_BUFFER_MAX_SIZE) {
+//            return ErrCode.ERR_EXCEPTION;
+//        }
         if (data[1] == (byte) 0xBC && data[2] == (byte) 0x01) {
             mSegmentIndex = 0;
             BleInBuffer buffer = new BleInBuffer(data[5], data);

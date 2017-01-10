@@ -179,7 +179,11 @@ public class BleServer implements IBleServer {
     private AdvertiseData createAdvData(String uuid_service) {
         AdvertiseData.Builder builder = new AdvertiseData.Builder();
         builder.addServiceUuid(ParcelUuid.fromString(uuid_service));
-        builder.addManufacturerData(RunEnv.BLESRV_SIG, DeviceUtil.getMacAddr(mContext));
+        byte[] manufactData = new byte[7];
+        short factoryId = DeviceUtil.getFactoryId();
+        int factIntId = ((factoryId & 0xff) << 8) | ((factoryId >> 8) & 0xff);
+        System.arraycopy(DeviceUtil.getMacAddr(mContext), 0, manufactData, 1, 6);
+        builder.addManufacturerData(factIntId, manufactData);
         builder.setIncludeTxPowerLevel(false);
         return builder.build();
     }

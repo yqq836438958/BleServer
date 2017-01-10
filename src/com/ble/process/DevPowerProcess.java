@@ -48,7 +48,7 @@ public class DevPowerProcess extends BleProcess {
         }
         if (req == null) {
             Log.e(TAG, "req null");
-            return EmRetCode.ERC_system_err_VALUE;
+            return EmRetCode.ERC_decode_err_VALUE;
         }
         mPower = req.getEmDevPower().ordinal();
         if (mPower == EmDevPower.EDP_power_on_VALUE) {
@@ -61,7 +61,7 @@ public class DevPowerProcess extends BleProcess {
             }
             mContext.setPowerOn(true);
         } else {
-            mRspData = ByteUtil.toByteArray("9000");
+            mRspData = ByteUtil.toByteArray("00");
             mChannel.close();
             mContext.setPowerOn(false);
         }

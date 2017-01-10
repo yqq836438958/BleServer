@@ -3,6 +3,7 @@ package com.ble.common;
 
 import android.content.Context;
 
+import com.ble.config.RunEnv;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,15 +17,18 @@ public class DeviceUtil {
     }
 
     public static int getProtoVer() {
-        return 0x020601;
+        return 0x010002;
     }
 
-    public static String getFactoryId() {
-        return android.os.Build.BRAND;
+    public static short getFactoryId() {
+        // 改成一卡通给我们分配的id
+        return RunEnv.BLESRV_SIG;
     }
 
-    public static String getDeviceType() {
-        return android.os.Build.MODEL;
+    public static byte[] getDeviceType() {
+        return new byte[] {
+                0x01
+        };
     }
 
     public static String getDeviceName() {

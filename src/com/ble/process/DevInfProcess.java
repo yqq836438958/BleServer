@@ -32,7 +32,7 @@ public class DevInfProcess extends BleProcess {
             e.printStackTrace();
         }
         if (req == null) {
-            return EmRetCode.ERC_system_err_VALUE;
+            return EmRetCode.ERC_decode_err_VALUE;
         }
         return EmRetCode.ERC_success_VALUE;
     }

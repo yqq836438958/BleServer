@@ -35,7 +35,7 @@ public class ApduProcess extends BleProcess {
             e.printStackTrace();
         }
         if (req == null) {
-            return EmRetCode.ERC_system_err_VALUE;
+            return EmRetCode.ERC_decode_err_VALUE;
         }
         byte[] input = req.getData().toByteArray();
         // if (mChannel.selectAID("A000000151000000") != 0) {

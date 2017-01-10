@@ -20,7 +20,7 @@ public class BleContext {
     private String mAuthedDeviceAddr = null;
 
     public boolean isSePoweOn() {
-        return bSePower;
+        return true;
     }
 
     public void setPowerOn(boolean val) {
@@ -28,7 +28,7 @@ public class BleContext {
     }
 
     public boolean isUserAuthed() {
-        return bUserAuth;
+        return true;
     }
 
     public void auth() {
