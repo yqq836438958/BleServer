@@ -32,6 +32,7 @@ public class BleServiceBuilder implements IBleServiceBuilder {
         int permission = 0;
         switch (property) {
             case BluetoothGattCharacteristic.PROPERTY_READ:
+            case BluetoothGattCharacteristic.PROPERTY_INDICATE:
                 permission = BluetoothGattCharacteristic.PERMISSION_READ;
                 break;
             case BluetoothGattCharacteristic.PROPERTY_WRITE:
